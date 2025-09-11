@@ -5,7 +5,9 @@ import com.kzou55.calorie.nutrition.tracker.backend.model.FoodItem;
 import com.kzou55.calorie.nutrition.tracker.backend.repository.FoodItemRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,42 +33,34 @@ public class FoodItemController {
 
         if (foodItem.isPresent()) {
             return ResponseEntity.ok(foodItem.get());
-        }
-        else {
+        } else {
             return ResponseEntity.notFound().build();
+
         }
     }
-
 
     @PostMapping
-    public FoodItem createFoodItem(FoodItem foodItem) {
-        return foodItemRepository.save(foodItem);
+    public ResponseEntity<Void> createFoodItem(@RequestBody FoodItem newFoodItem, UriComponentsBuilder ucb) {
+        FoodItem savedFoodItem = foodItemRepository.save(newFoodItem);
+        URI locationOfNewFoodItem = ucb
+                .path("/api/fooditems/{id}")
+                .buildAndExpand(savedFoodItem.getId())
+                .toUri();
+        return ResponseEntity.created(locationOfNewFoodItem).build();
     }
-
 
     // PUT /api/fooditems/{id}
     @PutMapping("/{id}")
-    public ResponseEntity<FoodItem> updateFoodItem(@PathVariable Long id, @RequestBody FoodItem updatedFoodItem) {
-        Optional<FoodItem> existingFoodItem = foodItemRepository.findById(id);
-
-        if (existingFoodItem.isPresent()) {
-            FoodItem foodItem = existingFoodItem.get();
-            // Update fields
-            foodItem.setName(updatedFoodItem.getName());
-            foodItem.setCalories(updatedFoodItem.getCalories());
-            foodItem.setProtein(updatedFoodItem.getProtein());
-            /**
-            foodItem.setCarbohydrates(updatedFoodItem.getCarbohydrates());
-            foodItem.setFat(updatedFoodItem.getFat());
-            foodItem.setFiber(updatedFoodItem.getFiber());
-            foodItem.setSugars(updatedFoodItem.getSugars());
-            foodItem.setServingSize(updatedFoodItem.getServingSize());
-             */
-
-            FoodItem savedFoodItem = foodItemRepository.save(foodItem);
-            return ResponseEntity.ok(savedFoodItem);
-        } else {
+    public ResponseEntity<FoodItem> updateFoodItem(@PathVariable Long id, @RequestBody FoodItem foodItemUpdate) {
+        Optional<FoodItem> optionalFoodItem = foodItemRepository.findById(id);
+        if (!optionalFoodItem.isPresent()) {
             return ResponseEntity.notFound().build();
+        }
+        else{
+            FoodItem foodItem = optionalFoodItem.get();
+            FoodItem updatedFoodItem =  new FoodItem(foodItem.getId(), foodItemUpdate.getName(), foodItemUpdate.getCalories(), foodItemUpdate.getProtein());
+            foodItemRepository.save(updatedFoodItem);
+            return ResponseEntity.noContent().build();
         }
     }
 
