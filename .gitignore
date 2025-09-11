@@ -1,0 +1,14 @@
+# Node
+/frontend/node_modules/
+/frontend/build/
+/frontend/.env
+
+# Java
+/backend/target/
+/backend/.idea/
+/backend/*.iml
+
+# OS + IDEs
+.DS_Store
+.vscode/
+.idea/
