@@ -3,7 +3,9 @@ package com.kzou55.calorie.nutrition.tracker.backend.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A meal class that represents a collection of food that an individual eats
@@ -25,8 +27,14 @@ public class Meal {
     private LocalDate date; // Date the meal was eaten
 
 
+    @ManyToMany
+    @JoinTable(name = "meal_food", joinColumns = @JoinColumn(name = "meal_id"), inverseJoinColumns = @JoinColumn(name = "food_item_id"))
     private List<FoodItem> foodItems;
 
-    // Optional: user ID if you add user management later
+
+    @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<MealFoodEntry> mealFoodEntries = new HashSet<>();
+
+    // Optional: user ID to be done later
     // private Long userId;
 }
