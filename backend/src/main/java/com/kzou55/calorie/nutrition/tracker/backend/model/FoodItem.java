@@ -21,11 +21,21 @@ public class FoodItem {
     private String name;
     private int calories;
     private double protein;
+
+    public FoodItem(int i, String chicekn, int i1, int i2) {
+        this.id = (long) i;
+        this.name = chicekn;
+        this.calories = i1;
+        this.protein = i2;
+    }
+
+    /**
     private double carbohydrates;
     private double fat;
     private double fiber;
     private double sugars;
     private String servingSize;
+     */
 
 
     public String getName() {
@@ -39,7 +49,7 @@ public class FoodItem {
     public double getProtein() {
         return protein;
     }
-
+    /**
     public double getCarbohydrates() {
         return carbohydrates;
     }
@@ -59,7 +69,7 @@ public class FoodItem {
     public String getServingSize() {
         return servingSize;
     }
-
+    */
     // Setters
     public void setId(Long id) {
         this.id = id;
@@ -77,6 +87,7 @@ public class FoodItem {
         this.protein = protein;
     }
 
+    /**
     public void setCarbohydrates(double carbohydrates) {
         this.carbohydrates = carbohydrates;
     }
@@ -96,5 +107,6 @@ public class FoodItem {
     public void setServingSize(String servingSize) {
         this.servingSize = servingSize;
     }
+    */
 }
 

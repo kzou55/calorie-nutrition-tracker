@@ -6,6 +6,7 @@ import com.kzou55.calorie.nutrition.tracker.backend.repository.FoodItemRepositor
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,11 +55,13 @@ public class FoodItemController {
             foodItem.setName(updatedFoodItem.getName());
             foodItem.setCalories(updatedFoodItem.getCalories());
             foodItem.setProtein(updatedFoodItem.getProtein());
+            /**
             foodItem.setCarbohydrates(updatedFoodItem.getCarbohydrates());
             foodItem.setFat(updatedFoodItem.getFat());
             foodItem.setFiber(updatedFoodItem.getFiber());
             foodItem.setSugars(updatedFoodItem.getSugars());
             foodItem.setServingSize(updatedFoodItem.getServingSize());
+             */
 
             FoodItem savedFoodItem = foodItemRepository.save(foodItem);
             return ResponseEntity.ok(savedFoodItem);
