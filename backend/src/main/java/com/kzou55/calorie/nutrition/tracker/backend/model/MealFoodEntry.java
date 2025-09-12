@@ -1,8 +1,10 @@
 package com.kzou55.calorie.nutrition.tracker.backend.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
 public class MealFoodEntry {
 
     @Id
@@ -19,5 +21,4 @@ public class MealFoodEntry {
 
     private int quantity;  // e.g., 3 bananas
 
-    // Constructors, getters, setters
 }
