@@ -1,5 +1,6 @@
 package com.kzou55.calorie.nutrition.tracker.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -27,6 +28,7 @@ public class Meal {
     private LocalDate date; // Date the meal was eaten
 
     @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<MealFoodEntry> mealFoodEntries = new HashSet<>();
 
     // Optional: user ID to be done later
