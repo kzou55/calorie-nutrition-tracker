@@ -22,15 +22,9 @@ public class Meal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;  // e.g., "Lunch", "Dinner"
+    private String type;  // e.g., "Lunch", "Dinner"
 
     private LocalDate date; // Date the meal was eaten
-
-
-    @ManyToMany
-    @JoinTable(name = "meal_food", joinColumns = @JoinColumn(name = "meal_id"), inverseJoinColumns = @JoinColumn(name = "food_item_id"))
-    private List<FoodItem> foodItems;
-
 
     @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<MealFoodEntry> mealFoodEntries = new HashSet<>();
