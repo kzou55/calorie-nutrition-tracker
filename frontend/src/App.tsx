@@ -1,25 +1,27 @@
 import './App.css'
 import React from 'react'
 import { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, BrowserRouter } from "react-router-dom";
 import DashboardPage from "./pages/DashboardPage";
 import AddMealPage from "./pages/AddMealPage";
 import AddFoodPage from "./pages/AddFoodPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import Navbar from "./components/layout/NavBar";
+import Layout from './components/layout/Layout';
+import './index.css';
 
 
 const App = () => {
   return (
-    <Router>
-      <Navbar />
+    <BrowserRouter>
       <Routes>
-        <Route path="/" element={<DashboardPage />} />
-        <Route path="/add-meal" element={<AddMealPage />} />
-        <Route path="/add-food" element={<AddFoodPage />} />
-        <Route path="*" element={<NotFoundPage />} />
+        <Route element={<Layout />}>
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/add-meal" element={<AddMealPage />} />
+          <Route path="/add-food" element={<AddFoodPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 };
 
