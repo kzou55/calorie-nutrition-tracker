@@ -1,11 +1,9 @@
 import type { JSX } from "react";
-import NutritionSummary from "../components/dashboard/NutritionSummary";
-import { mockMeal } from "../data/meals";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
 
 const DashboardPage = (): JSX.Element => {
-  const meals = useSelector((state: RootState) => state.meals);
+  const meals = useSelector((state: RootState) => state.meals.meals);
 
   const totals = meals.reduce(
     (acc, meal) => {
@@ -36,8 +34,3 @@ const DashboardPage = (): JSX.Element => {
 };
 
 export default DashboardPage;
-
-
-
-// Add total calories for today
-// Add Total Nutritions

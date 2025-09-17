@@ -1,13 +1,20 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addFood } from "../store/mealsSlice";
-import type { RootState } from "../store/store";
-import type { MealFoodEntry } from "../types/mealFoodEntry";
 import { useNavigate } from "react-router-dom";
+import { addFoodToMeal } from "../store/mealsSlice";
+
+
+import type { AppDispatch } from "../store/store";
+import type {} from "../types/index";
+import type { MealFoodEntry, NewMealFoodEntry } from "../types/index";
+import type { RootState } from "../store/store";
 
 const AddFoodPage = () => {
-  const dispatch = useDispatch();
-  const meals = useSelector((state: RootState) => state.meals);
+  const dispatch = useDispatch<AppDispatch>();
+  const meals = useSelector((state: RootState) => state.meals.meals);
+  const loading = useSelector((state: RootState) => state.meals.loading);
+  const error = useSelector((state: RootState) => state.meals.error);
+
   const navigate = useNavigate();
 
   // local state for inputs
@@ -18,20 +25,25 @@ const AddFoodPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const newEntry: MealFoodEntry = {
-      id: Date.now(),
+    // Construct payload in the shape backend expects
+    const newEntry : NewMealFoodEntry = {
+      quantity: 1,
       foodItem: {
-        id: Date.now(),
         name: foodName,
         calories,
         protein,
       },
-      quantity: 1,
     };
 
-    dispatch(addFood({ mealId, entry: newEntry }));
-    navigate("/add-meal");
+     dispatch(addFoodToMeal({ mealId, entry: newEntry }))
+      .unwrap() //  lets us catch errors easily
+      .then(() => {
+        navigate("/add-meal"); // go back once successful
+      })
+      .catch((err) => {
+        console.error("Failed to add food:", err);
+      });
+
   };
 
   return (
