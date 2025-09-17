@@ -20,6 +20,7 @@ public class MealService {
     private final MealRepository mealRepository;
     private final FoodItemRepository foodItemRepository;
 
+    // Generic repo methods
     public List<Meal> getMeals() {
         return mealRepository.findAll();
     }
@@ -36,6 +37,51 @@ public class MealService {
         mealRepository.deleteById(id);
     }
 
+    // Adding food to a meal
+    @Transactional
+    public Meal addFoodToMeal(Long mealId, MealFoodEntry entry) {
+
+        Meal meal = mealRepository.findById(mealId)
+                .orElseThrow(() -> new EntityNotFoundException("Meal not found with id: " + mealId));
+
+        FoodItem foodItem = entry.getFoodItem();
+
+        if (foodItem.getId() != null) {
+            // If food already exists, fetch it
+            FoodItem existingFood = foodItemRepository.findById(foodItem.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Food item not found with id: " + foodItem.getId()));
+            entry.setFoodItem(existingFood);
+        } else {
+            // Otherwise, create new food item
+            FoodItem savedFood = foodItemRepository.save(foodItem);
+            entry.setFoodItem(savedFood);
+        }
+
+        // Attach the entry to this meal
+        entry.setMeal(meal);
+        meal.getMealFoodEntries().add(entry);
+
+        return mealRepository.save(meal); // ✅ return updated meal
+    }
+
+    // Deleting food from a meal
+    @Transactional
+    public Meal removeFoodFromMeal(Long mealId, Long entryId) {
+        Meal meal = mealRepository.findById(mealId)
+                .orElseThrow(() -> new EntityNotFoundException("Meal not found with id: " + mealId));
+
+        boolean removed = meal.getMealFoodEntries().removeIf(entry -> entry.getId().equals(entryId));
+
+        if (!removed) {
+            throw new EntityNotFoundException("Food entry not found with id: " + entryId);
+        }
+
+        return mealRepository.save(meal);
+    }
+
+
+
+    // Not sure if needed since meals aren't created anymore
     @Transactional
     public Meal createMeal(Meal meal) {
         for (MealFoodEntry entry : meal.getMealFoodEntries()) {
@@ -48,7 +94,7 @@ public class MealService {
                     entry.setFoodItem(existingFood);
                 }
                 else {
-                    throw new EntityNotFoundException("FoodItem nnot found");
+                    throw new EntityNotFoundException("FoodItem not found");
                 }
             }
             else {
