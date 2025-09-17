@@ -51,7 +51,7 @@ public class MealController {
     }
 
     // Deleting a food entry from a meal
-    // /api/meals/{mid}/food/{fid}
+    // /api/meals/{mid}/entries/{eid}
     @DeleteMapping("/{mealId}/entries/{entryId}")
     public ResponseEntity<Meal> removeFoodFromMeal(@PathVariable Long mealId, @PathVariable Long entryId) {
         Meal updatedMeal = mealService.removeFoodFromMeal(mealId, entryId);
