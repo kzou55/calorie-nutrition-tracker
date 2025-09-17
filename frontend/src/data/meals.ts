@@ -34,5 +34,11 @@ export const mockMeal: Meal[] = [
         quantity: 1,
       },
     ],
-  },
+  },{
+    id: 3, 
+    type: "Dinner",
+    date: "2025-09-16",
+    mealFoodEntries: [
+    ],
+  }
 ];

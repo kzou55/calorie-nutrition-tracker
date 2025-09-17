@@ -16,8 +16,9 @@ const App = () => {
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<DashboardPage />} />
-          <Route path="/add-meal" element={<AddMealPage />} />
-          <Route path="/add-food" element={<AddFoodPage />} />
+          <Route path="/add-meal" element={<AddMealPage />}>
+            <Route path="add-food" element={<AddFoodPage />} />
+          </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
