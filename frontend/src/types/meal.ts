@@ -1,7 +1,11 @@
-import type { MealFoodEntry } from "./mealFoodEntry";
-import type { FoodItem } from "./foodItem";
+export interface FoodItem  {
+  id: number;
+  name: string;
+  calories: number;
+  protein: number;
+};
 
-export type Meal = {
+export interface Meal {
   id: number;
   type: "Breakfast" | "Lunch" | "Dinner";     
   date: string;      // In ISO format (ex. "2025-09-13")
@@ -25,10 +29,3 @@ export interface NewMealFoodEntry {
     protein: number;
   };
 }
-
-export type FoodItem = {
-  id: number;
-  name: string;
-  calories: number;
-  protein: number;
-};
