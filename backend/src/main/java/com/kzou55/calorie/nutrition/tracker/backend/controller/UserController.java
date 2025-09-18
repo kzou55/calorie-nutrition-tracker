@@ -2,9 +2,12 @@ package com.kzou55.calorie.nutrition.tracker.backend.controller;
 
 import com.kzou55.calorie.nutrition.tracker.backend.model.User;
 import com.kzou55.calorie.nutrition.tracker.backend.service.UserService;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -16,16 +19,15 @@ public class UserController {
         this.userService = userService;
     }
 
+
+    @GetMapping
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return userService.getUserById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        User newUser = userService.registerUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
 
     @GetMapping("/username/{username}")
@@ -34,4 +36,13 @@ public class UserController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+    /*
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        return userService.getUserById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+     */
+
 }

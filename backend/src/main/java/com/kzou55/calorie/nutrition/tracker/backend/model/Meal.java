@@ -1,9 +1,12 @@
 package com.kzou55.calorie.nutrition.tracker.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,9 +32,10 @@ public class Meal {
 
     @ManyToOne(fetch = FetchType.LAZY)  // don't pull the user unless you ask for it
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;
 
     @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private Set<MealFoodEntry> mealFoodEntries = new HashSet<>();
+    private List<MealFoodEntry> mealFoodEntries = new ArrayList<>();
 }

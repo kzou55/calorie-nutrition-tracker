@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,12 +38,26 @@ public class MealService {
         mealRepository.deleteById(id);
     }
 
-    // Adding food to a meal
+    // Getting all meals for a specific user
+    public List<Meal> getMealsForUser(Long userId) {
+        return mealRepository.findByUserId(userId);
+    }
+
+    // Get meals for a user on a specific date
+    public List<Meal> getMealsForUserOnDate(Long userId, LocalDate date) {
+        return mealRepository.findByUserIdAndDate(userId, date);
+    }
+
+    // Adding food entry to a meal
     @Transactional
-    public Meal addFoodToMeal(Long mealId, MealFoodEntry entry) {
+    public Meal addFoodToMeal(Long userId, Long mealId, MealFoodEntry entry) {
 
         Meal meal = mealRepository.findById(mealId)
                 .orElseThrow(() -> new EntityNotFoundException("Meal not found with id: " + mealId));
+
+        if (!meal.getUser().getId().equals(userId)) {
+            throw new SecurityException("Meal does not belong to this user");
+        }
 
         FoodItem foodItem = entry.getFoodItem();
 
@@ -66,9 +81,13 @@ public class MealService {
 
     // Deleting food from a meal
     @Transactional
-    public Meal removeFoodFromMeal(Long mealId, Long entryId) {
+    public Meal removeFoodFromMeal(Long userId, Long mealId, Long entryId) {
         Meal meal = mealRepository.findById(mealId)
                 .orElseThrow(() -> new EntityNotFoundException("Meal not found with id: " + mealId));
+
+        if (!meal.getUser().getId().equals(userId)) {
+            throw new SecurityException("Meal does not belong to this user");
+        }
 
         boolean removed = meal.getMealFoodEntries().removeIf(entry -> entry.getId().equals(entryId));
 

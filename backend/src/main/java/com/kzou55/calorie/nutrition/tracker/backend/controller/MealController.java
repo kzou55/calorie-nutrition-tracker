@@ -5,16 +5,18 @@ import com.kzou55.calorie.nutrition.tracker.backend.model.Meal;
 import com.kzou55.calorie.nutrition.tracker.backend.model.MealFoodEntry;
 import com.kzou55.calorie.nutrition.tracker.backend.repository.MealRepository;
 import com.kzou55.calorie.nutrition.tracker.backend.service.MealService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/meals")
+@RequestMapping("/api/users/{userId}/meals")
 public class MealController {
     private final MealService mealService;
     public MealController(MealService mealService) {
@@ -22,49 +24,42 @@ public class MealController {
     }
 
     // Need to get all meals
-    // ./api/meals
+    // ./api/users/{uid}/meals
     @GetMapping
-    public List<Meal> getAllMeals() {
-        return mealService.getMeals();
+    public List<Meal> getMealsForUser(@PathVariable Long userId) {
+        return mealService.getMealsForUser(userId);
     }
 
-    // Get a specific meal
-    // ./api/meals/{id}
-    @GetMapping("/{requestedId}")
-    public ResponseEntity<Meal> getRequestedMeal(@PathVariable Long requestedId) {
-        Optional<Meal> meal = mealService.findMealById(requestedId);
-
-        if (meal.isPresent()) {
-            return ResponseEntity.ok(meal.get());
-        } else {
-            return ResponseEntity.notFound().build();
-
-        }
+    @GetMapping("/date/{date}")
+    public List<Meal> getMealsForUserOnDate(
+            @PathVariable Long userId,
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return mealService.getMealsForUserOnDate(userId, date);
     }
+
     // Don't need to create a meal, just add/delete food in a meal
     // Adding a food entry to a meal
-    // /api/meal/{mid}/foods
-    @PostMapping("/{mealId}/foods")
-    public ResponseEntity<Meal> addFoodToMeal(@PathVariable Long mealId, @RequestBody MealFoodEntry entry) {
-        Meal updatedMeal = mealService.addFoodToMeal(mealId, entry);
+    // /api/users.{uid}/meal/{mid}/entries
+    @PostMapping("/{mealId}/entries")
+    public ResponseEntity<Meal> addFoodToMeal(@PathVariable Long userId,
+                                              @PathVariable Long mealId,
+                                              @RequestBody MealFoodEntry entry) {
+        Meal updatedMeal = mealService.addFoodToMeal(userId, mealId, entry);
         return ResponseEntity.ok(updatedMeal);
     }
 
     // Deleting a food entry from a meal
-    // /api/meals/{mid}/entries/{eid}
+    // /api/users/{uid}/meals/{mid}/entries/{eid}
     @DeleteMapping("/{mealId}/entries/{entryId}")
-    public ResponseEntity<Meal> removeFoodFromMeal(@PathVariable Long mealId, @PathVariable Long entryId) {
-        Meal updatedMeal = mealService.removeFoodFromMeal(mealId, entryId);
+    public ResponseEntity<Meal> removeFoodFromMeal(@PathVariable Long userId,
+                                                   @PathVariable Long mealId,
+                                                   @PathVariable Long entryId) {
+
+        Meal updatedMeal = mealService.removeFoodFromMeal(userId, mealId, entryId);
         return ResponseEntity.ok(updatedMeal);
     }
 
     // Add update mealentry later
-
-
-
-
-
-
 
 
 
@@ -86,6 +81,20 @@ public class MealController {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Get a specific meal
+    // ./api/meals/{id}
+    @GetMapping("/{requestedId}")
+    public ResponseEntity<Meal> getRequestedMeal(@PathVariable Long requestedId) {
+        Optional<Meal> meal = mealService.findMealById(requestedId);
+
+        if (meal.isPresent()) {
+            return ResponseEntity.ok(meal.get());
+        } else {
+            return ResponseEntity.notFound().build();
+
         }
     }
 
