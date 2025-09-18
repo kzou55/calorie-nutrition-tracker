@@ -3,6 +3,9 @@ package com.kzou55.calorie.nutrition.tracker.backend.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Table(name = "app_user")
@@ -17,7 +20,10 @@ public class User {
 
     private String username;
     private String email;
+    private String password;
 
-    // Will add password and authentication once mvp is finished
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Meal> meals = new ArrayList<Meal>();
+
 }
 

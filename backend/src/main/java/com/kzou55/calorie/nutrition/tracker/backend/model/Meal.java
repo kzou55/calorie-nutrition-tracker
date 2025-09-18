@@ -27,10 +27,11 @@ public class Meal {
 
     private LocalDate date; // Date the meal was eaten
 
+    @ManyToOne(fetch = FetchType.LAZY)  // don't pull the user unless you ask for it
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<MealFoodEntry> mealFoodEntries = new HashSet<>();
-
-    // Optional: user ID to be done later
-    // private Long userId;
 }
