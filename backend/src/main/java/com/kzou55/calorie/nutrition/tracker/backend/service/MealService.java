@@ -76,7 +76,7 @@ public class MealService {
         entry.setMeal(meal);
         meal.getMealFoodEntries().add(entry);
 
-        return mealRepository.save(meal); // ✅ return updated meal
+        return mealRepository.save(meal); //
     }
 
     // Deleting food from a meal
