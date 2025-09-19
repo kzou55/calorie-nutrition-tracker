@@ -17,20 +17,20 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final MealRepository mealRepository;
-    private final PasswordEncoder passwordEncoder; // Using bcrypt
-
+    private final PasswordEncoder passwordEncoder;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
     public User registerUser(User user) {
-        // Encoding Password
+        // Encode password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         // Save user
         User savedUser = userRepository.save(user);
 
-        // Create the default Meals
+        // Create default meals
         LocalDate today = LocalDate.now();
         List<Meal> defaultMeals = List.of(
                 Meal.builder().date(today).type("Breakfast").user(savedUser).build(),
@@ -39,11 +39,8 @@ public class UserService {
         );
         mealRepository.saveAll(defaultMeals);
         savedUser.getMeals().addAll(defaultMeals);
-        return savedUser;
-    }
 
-    public User createUser(User user) {
-        return userRepository.save(user);
+        return savedUser;
     }
 
     public Optional<User> getUserByUsername(String username) {
