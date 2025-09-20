@@ -3,15 +3,15 @@ package com.kzou55.calorie.nutrition.tracker.backend.controller;
 import com.kzou55.calorie.nutrition.tracker.backend.model.User;
 import com.kzou55.calorie.nutrition.tracker.backend.security.JwtUtil;
 import com.kzou55.calorie.nutrition.tracker.backend.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -45,6 +45,29 @@ public class AuthController {
         // generate JWT if valid
         String token = jwtUtil.generateToken(request.get("username"));
         return ResponseEntity.ok(Map.of("token", token));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);
+        String username = jwtUtil.extractUsername(token);
+
+        if (!jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
+        }
+
+        Optional<User> user =  userService.getUserByUsername(username) ;
+
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user.get());
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found"); // ResponseEntity<String>
+        }
     }
 }
 
