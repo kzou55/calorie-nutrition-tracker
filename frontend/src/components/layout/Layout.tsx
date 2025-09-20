@@ -1,3 +1,4 @@
+import LogoutButton from "./LogoutButton";
 import NavBar from "./NavBar"
 import { Link, Outlet } from "react-router-dom";
 
@@ -14,7 +15,7 @@ const Layout = () => {
                     <Link to="/login" style={{ marginRight: "1rem" }}>Login</Link>
                     <Link to="/register" style={{ marginRight: "1rem" }}>
                     Register</Link>
-                    Logout
+                    <LogoutButton/>
                 </div>
             </div>
             {/* Row 2 */}
