@@ -1,0 +1,75 @@
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import type { Meal, MealFoodEntry, NewMealFoodEntry } from "../../types/index";
+import mealService from "./mealService";
+import type { RootState } from "../../app/store";
+
+
+// 🔹 Async thunks
+export const fetchMeals = createAsyncThunk<Meal[], void, { state: RootState }>("meals/fetchMeals", async (_, thunkAPI) => {
+    const token = thunkAPI.getState().auth.token;
+    if (!token) throw new Error("No auth token");
+    return await mealService.getUserMeals(token);
+});
+
+export const addFoodToMeal = createAsyncThunk<Meal, { mealId: number; entry: MealFoodEntry | NewMealFoodEntry }, { state: RootState }>(
+    "meals/addFoodToMeal", async ({ mealId, entry }, thunkAPI) => {
+
+        const token = thunkAPI.getState().auth.token;
+        if (!token) throw new Error("No auth token");
+        return await mealService.addMealFoodEntry(mealId, entry, token);
+    });
+
+export const removeFoodEntryFromMeal = createAsyncThunk<Meal, { mealId: number; entryId: number }, { state: RootState }>(
+    "meals/removeFoodEntryFromMeal", async ({ mealId, entryId }, thunkAPI) => {
+
+        const token = thunkAPI.getState().auth.token;
+        if (!token) throw new Error("No auth token");
+        return await mealService.removeMealFoodEntry(mealId, entryId, token);
+    });
+
+
+// 🔹 Slice
+interface MealsState {
+    meals: Meal[];
+    loading: boolean;
+    error: string | null;
+}
+
+const initialState: MealsState = {
+    meals: [],
+    loading: false,
+    error: null,
+};
+
+const mealsSlice = createSlice({
+    name: "meals",
+    initialState,
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchMeals.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchMeals.fulfilled, (state, action) => {
+                state.loading = false;
+                state.meals = action.payload;
+            })
+            .addCase(fetchMeals.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || "Failed to fetch meals";
+            })
+            .addCase(addFoodToMeal.fulfilled, (state, action) => {
+                const updatedMeal = action.payload;
+                const idx = state.meals.findIndex((m) => m.id === updatedMeal.id);
+                if (idx !== -1) state.meals[idx] = updatedMeal;
+            })
+            .addCase(removeFoodEntryFromMeal.fulfilled, (state, action) => {
+                const updatedMeal = action.payload;
+                const idx = state.meals.findIndex((m) => m.id === updatedMeal.id);
+                if (idx !== -1) state.meals[idx] = updatedMeal;
+            });
+    },
+});
+
+export default mealsSlice.reducer

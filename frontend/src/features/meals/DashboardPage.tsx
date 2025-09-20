@@ -1,7 +1,6 @@
 import type { JSX } from "react";
 import { useSelector } from "react-redux";
-import type { RootState } from "../store/store";
-
+import type { RootState } from "../../app/store";
 const DashboardPage = (): JSX.Element => {
   const meals = useSelector((state: RootState) => state.meals.meals);
 

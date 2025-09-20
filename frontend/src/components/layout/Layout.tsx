@@ -1,5 +1,5 @@
 import NavBar from "./NavBar"
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 
 
 
@@ -11,8 +11,9 @@ const Layout = () => {
             <div className="flex justify-between items-center">
                 <div>NutritionTracker</div>
                 <div className="flex flex-col">
-                    Login
-                    Register
+                    <Link to="/login" style={{ marginRight: "1rem" }}>Login</Link>
+                    <Link to="/register" style={{ marginRight: "1rem" }}>
+                    Register</Link>
                     Logout
                 </div>
             </div>

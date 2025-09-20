@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { addFoodToMeal } from "../store/mealsSlice";
+import { addFoodToMeal } from "./mealSlice";
 
 
-import type { AppDispatch } from "../store/store";
-import type {} from "../types/index";
-import type { MealFoodEntry, NewMealFoodEntry } from "../types/index";
-import type { RootState } from "../store/store";
+import { useAppDispatch} from "../../app/hooks";
+import type {} from "../../types/index";
+import type { MealFoodEntry, NewMealFoodEntry } from "../../types/index";
+import type { RootState } from "../../app/store";
 
 const AddFoodPage = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const meals = useSelector((state: RootState) => state.meals.meals);
   const loading = useSelector((state: RootState) => state.meals.loading);
   const error = useSelector((state: RootState) => state.meals.error);
