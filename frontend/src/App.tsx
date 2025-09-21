@@ -1,5 +1,5 @@
 import './App.css'
-import { BrowserRouter as Router, Routes, Route, BrowserRouter } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import DashboardPage from "./features/meals/DashboardPage";
 import LoginPage from "./features/auth/LoginPage";
 import RegisterPage from './features/auth/RegisterPage';
@@ -15,7 +15,8 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
-          <Route path="/" element={<DashboardPage />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/register' element={<RegisterPage />} />
           <Route path="/add-meal" element={<AddMealPage />}>

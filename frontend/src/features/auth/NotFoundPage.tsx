@@ -1,2 +1,2 @@
-const AddFoodPage = () => <h1>Add Food</h1>;
-export default AddFoodPage;
+const NotFoundPage = () => <h1>Not Found</h1>;
+export default NotFoundPage;
