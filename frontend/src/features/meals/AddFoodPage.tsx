@@ -1,32 +1,34 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { addFoodToMeal } from "./mealSlice";
-
-
-import { useAppDispatch} from "../../app/hooks";
-import type {} from "../../types/index";
-import type { MealFoodEntry, NewMealFoodEntry } from "../../types/index";
+import { useAppDispatch } from "../../app/hooks";
+import type { NewMealFoodEntry } from "../../types/index";
 import type { RootState } from "../../app/store";
+
+const MEAL_TYPES = ["Breakfast", "Lunch", "Dinner"];
 
 const AddFoodPage = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const meals = useSelector((state: RootState) => state.meals.meals);
   const loading = useSelector((state: RootState) => state.meals.loading);
   const error = useSelector((state: RootState) => state.meals.error);
 
-  const navigate = useNavigate();
-
-  // local state for inputs
-  const [mealId, setMealId] = useState(meals[0]?.id ?? 1);
+  const [mealType, setMealType] = useState(MEAL_TYPES[0]);
   const [foodName, setFoodName] = useState("");
   const [calories, setCalories] = useState<number>(0);
   const [protein, setProtein] = useState<number>(0);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Construct payload in the shape backend expects
-    const newEntry : NewMealFoodEntry = {
+
+    // Check if a meal of this type exists
+    const existingMeal = meals.find((m) => m.type === mealType);
+    const mealId = existingMeal?.id;
+
+    const newEntry: NewMealFoodEntry = {
       quantity: 1,
       foodItem: {
         name: foodName,
@@ -35,38 +37,44 @@ const AddFoodPage = () => {
       },
     };
 
-     dispatch(addFoodToMeal({ mealId, entry: newEntry }))
-      .unwrap() //  lets us catch errors easily
-      .then(() => {
-        navigate("/add-meal"); // go back once successful
-      })
-      .catch((err) => {
-        console.error("Failed to add food:", err);
-      });
+    try {
+      await dispatch(
+        addFoodToMeal({
+          mealId,
+          entry: newEntry,
+          mealType,
+          date: new Date().toISOString().split("T")[0], // send YYYY-MM-DD
+        })
+      ).unwrap();
 
+      navigate("/add-meal"); // go back to main meal page
+    } catch (err) {
+      console.error("Failed to add food:", err);
+    }
   };
+
+  if (loading) return <p>Loading meals...</p>;
+  if (error) return <p className="text-red-600">Error: {error}</p>;
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-4">
       <h2 className="text-xl font-bold">Add Food</h2>
 
-      {/* Meal selector */}
       <label className="flex flex-col">
         Meal Type:
         <select
-          value={mealId}
-          onChange={(e) => setMealId(Number(e.target.value))}
+          value={mealType}
+          onChange={(e) => setMealType(e.target.value)}
           className="border p-2 rounded"
         >
-          {meals.map((meal) => (
-            <option key={meal.id} value={meal.id}>
-              {meal.type}
+          {MEAL_TYPES.map((type) => (
+            <option key={type} value={type}>
+              {type}
             </option>
           ))}
         </select>
       </label>
 
-      {/* Food name */}
       <label className="flex flex-col">
         Food Name:
         <input
@@ -78,7 +86,6 @@ const AddFoodPage = () => {
         />
       </label>
 
-      {/* Calories */}
       <label className="flex flex-col">
         Calories:
         <input
@@ -90,7 +97,6 @@ const AddFoodPage = () => {
         />
       </label>
 
-      {/* Protein */}
       <label className="flex flex-col">
         Protein:
         <input

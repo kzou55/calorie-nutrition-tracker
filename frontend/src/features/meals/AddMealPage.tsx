@@ -39,59 +39,41 @@ const AddMealPage = () => {
         </thead>
         <tbody>
           {MEAL_TYPES.map((type) => {
-            const meal = meals.find((m: Meal) => m.type === type);
+            const meal = meals.find((m) => m.type === type);
 
             return (
               <React.Fragment key={type}>
-                {/* Meal header row */}
+                {/* Meal header */}
                 <tr className="border border-gray-300 bg-gray-100">
                   <td className="border border-gray-300 font-bold" colSpan={4}>
                     {type}
                   </td>
                 </tr>
 
-                {meal ? (
-                  meal.mealFoodEntries.length > 0 ? (
-                    meal.mealFoodEntries.map((entry: MealFoodEntry) => (
-                      <tr key={entry.id}>
-                        <td className="border border-gray-300 px-4 py-2">
-                          {entry.foodItem.name}
-                        </td>
-                        <td className="border border-gray-300 px-4 py-2">
-                          {entry.foodItem.calories}
-                        </td>
-                        <td className="border border-gray-300 px-4 py-2">
-                          {entry.foodItem.protein}
-                        </td>
-                        <td className="border border-gray-300 px-4 py-2 text-center">
-                          <button
-                            className="text-red-600 hover:underline"
-                            onClick={() =>
-                              handleDelete(meal.id, entry.id!)
-                            }
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        className="border border-gray-300 italic text-gray-500 px-4 py-2"
-                        colSpan={4}
-                      >
-                        No items yet
+                {/* If meal exists, show entries; otherwise show a placeholder */}
+                {(meal?.mealFoodEntries.length ?? 0) > 0 ? (
+                  meal!.mealFoodEntries.map((entry: MealFoodEntry) => (
+                    <tr key={entry.id}>
+                      <td className="border border-gray-300 px-4 py-2">{entry.foodItem.name}</td>
+                      <td className="border border-gray-300 px-4 py-2">{entry.foodItem.calories}</td>
+                      <td className="border border-gray-300 px-4 py-2">{entry.foodItem.protein}</td>
+                      <td className="border border-gray-300 px-4 py-2 text-center">
+                        <button
+                          className="text-red-600 hover:underline"
+                          onClick={() => handleDelete(meal!.id, entry.id!)}
+                        >
+                          Delete
+                        </button>
                       </td>
                     </tr>
-                  )
+                  ))
                 ) : (
                   <tr>
                     <td
                       className="border border-gray-300 italic text-gray-500 px-4 py-2"
                       colSpan={4}
                     >
-                      Meal not created yet
+                      {meal ? "No items yet" : "Add food to create this meal"}
                     </td>
                   </tr>
                 )}

@@ -11,6 +11,13 @@ const getUserMeals = async (token: string) => {
 }
 
 
+const createMeal = async (meal: { type: string; date: string }, token: string) => {
+    const response = await axios.post(API_URL, meal, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data as Meal;
+};
+
 const addMealFoodEntry = async (mealId: number, entry: MealFoodEntry | NewMealFoodEntry, token: string) => {
     const response = await axios.post(`${API_URL}/${mealId}/entries`, entry, {
         headers: {
@@ -28,6 +35,6 @@ export const removeMealFoodEntry = async (mealId: number, entryId: number, token
     return res.data as Meal;
 };
 
-const MealService = {getUserMeals, addMealFoodEntry, removeMealFoodEntry}
+const MealService = { getUserMeals, createMeal, addMealFoodEntry, removeMealFoodEntry }
 
 export default MealService;

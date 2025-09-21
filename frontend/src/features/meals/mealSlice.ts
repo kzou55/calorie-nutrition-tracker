@@ -11,13 +11,29 @@ export const fetchMeals = createAsyncThunk<Meal[], void, { state: RootState }>("
     return await mealService.getUserMeals(token);
 });
 
-export const addFoodToMeal = createAsyncThunk<Meal, { mealId: number; entry: MealFoodEntry | NewMealFoodEntry }, { state: RootState }>(
-    "meals/addFoodToMeal", async ({ mealId, entry }, thunkAPI) => {
+export const addFoodToMeal = createAsyncThunk<Meal, { mealId?: number; entry: NewMealFoodEntry; mealType: string; date: string }, { state: RootState }>(
+    "meals/addFood",
+    async ({ mealId, entry, mealType, date }: { mealId?: number; entry: NewMealFoodEntry; mealType: string; date: string }, thunkAPI) => {
 
         const token = thunkAPI.getState().auth.token;
         if (!token) throw new Error("No auth token");
-        return await mealService.addMealFoodEntry(mealId, entry, token);
-    });
+
+        try {
+            let id = mealId;
+
+            // If mealId not provided, create the meal first
+            if (!mealId) {
+                const meal = await mealService.createMeal({ type: mealType, date }, token);
+                id = meal.id;
+            }
+
+            // Add the food entry to the meal
+            return await mealService.addMealFoodEntry(id!, entry, token);
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(err.message || "Failed to add food entry");
+        }
+    }
+);
 
 export const removeFoodEntryFromMeal = createAsyncThunk<Meal, { mealId: number; entryId: number }, { state: RootState }>(
     "meals/removeFoodEntryFromMeal", async ({ mealId, entryId }, thunkAPI) => {
@@ -63,6 +79,7 @@ const mealsSlice = createSlice({
                 const updatedMeal = action.payload;
                 const idx = state.meals.findIndex((m) => m.id === updatedMeal.id);
                 if (idx !== -1) state.meals[idx] = updatedMeal;
+                else state.meals.push(updatedMeal); // Add new meal dynamically
             })
             .addCase(removeFoodEntryFromMeal.fulfilled, (state, action) => {
                 const updatedMeal = action.payload;
