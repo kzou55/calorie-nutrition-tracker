@@ -3,6 +3,7 @@ package com.kzou55.calorie.nutrition.tracker.backend.service;
 import com.kzou55.calorie.nutrition.tracker.backend.model.Meal;
 import com.kzou55.calorie.nutrition.tracker.backend.model.FoodItem;
 import com.kzou55.calorie.nutrition.tracker.backend.model.MealFoodEntry;
+import com.kzou55.calorie.nutrition.tracker.backend.model.User;
 import com.kzou55.calorie.nutrition.tracker.backend.repository.MealRepository;
 import com.kzou55.calorie.nutrition.tracker.backend.repository.FoodItemRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -97,33 +98,39 @@ public class MealService {
 
         return mealRepository.save(meal);
     }
-
-
-
-    // Not sure if needed since meals aren't created anymore
-    @Transactional
-    public Meal createMeal(Meal meal) {
-        for (MealFoodEntry entry : meal.getMealFoodEntries()) {
-            FoodItem fi = entry.getFoodItem();
-            if (fi.getId() != null) {
-                // Existing FoodItem, fetch managed entity
-                Optional<FoodItem> possibleFood = foodItemRepository.findById(fi.getId());
-                if (possibleFood.isPresent()){
-                    FoodItem existingFood = possibleFood.get();
-                    entry.setFoodItem(existingFood);
-                }
-                else {
-                    throw new EntityNotFoundException("FoodItem not found");
-                }
+/*
+    // Optional: create meals if none exist for today
+    public List<Meal> getOrInitializeMealsForToday(Long userId) {
+        LocalDate today = LocalDate.now();
+        List<Meal> meals = mealRepository.findByUserIdAndDate(userId, today);
+        if (meals.isEmpty()) {
+            for (String type : List.of("Breakfast", "Lunch", "Dinner")) {
+                Meal newMeal = new Meal();
+                newMeal.setUserId(userId);
+                newMeal.setType(type);
+                newMeal.setDate(today);
+                mealRepository.save(newMeal);
             }
-            else {
-                // New FoodItem, save it first
-                FoodItem saved = foodItemRepository.save(fi);
-                entry.setFoodItem(saved);
-            }
-            entry.setMeal(meal);
+            meals = mealRepository.findByUserIdAndDate(userId, today);
         }
-        // Save meal with updated mealFoodEntries
-        return mealRepository.save(meal);
+        return meals;
+    }
+*/
+
+    @Transactional
+    public Meal createMeal(User user, Meal meal) {
+
+        // Check if a meal of this type already exists for the user on this date
+        Optional<Meal> existing = mealRepository.findByUserAndTypeAndDate(user, meal.getType(), meal.getDate());
+        if (existing.isPresent()) {
+            return existing.get(); // optionally just return it
+        }
+
+        Meal newMeal = new Meal();
+        newMeal.setUser(user);
+        newMeal.setType(meal.getType());
+        newMeal.setDate(meal.getDate());
+
+        return mealRepository.save(newMeal);
     }
 }

@@ -2,6 +2,7 @@ package com.kzou55.calorie.nutrition.tracker.backend.controller;
 
 import com.kzou55.calorie.nutrition.tracker.backend.model.Meal;
 import com.kzou55.calorie.nutrition.tracker.backend.model.MealFoodEntry;
+import com.kzou55.calorie.nutrition.tracker.backend.model.User;
 import com.kzou55.calorie.nutrition.tracker.backend.security.CustomUserDetails;
 import com.kzou55.calorie.nutrition.tracker.backend.service.MealService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -42,6 +43,18 @@ public class MealController {
         return mealService.getMealsForUserOnDate(userId, date);
     }
 
+
+    // Creating a meal for a user on the given date
+    // /api/meal
+    @PostMapping
+    public ResponseEntity<Meal> createMeal(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody Meal meal) {
+
+        Meal createdMeal = mealService.createMeal(userDetails.getUser(), meal);
+        return ResponseEntity.ok(createdMeal);
+    }
+
     // Adding a food entry to a meal
     // /api/meal/{mid}/entries
     @PostMapping("/{mealId}/entries")
@@ -69,18 +82,6 @@ public class MealController {
     // Add update mealentry later
 
 
-
-    // The following I'm not sure if i need anymore/use for postman testing
-    @PostMapping
-    public ResponseEntity<Void> createMeal(@RequestBody Meal newMeal, UriComponentsBuilder ucb) {
-
-        Meal savedMeal = mealService.createMeal(newMeal);
-        URI locationOfNewMeal = ucb
-                .path("/api/meals/{id}")
-                .buildAndExpand(savedMeal.getId())
-                .toUri();
-        return ResponseEntity.created(locationOfNewMeal).build();
-    }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMeal(@PathVariable Long id) {
         if (mealService.existsById(id)) {

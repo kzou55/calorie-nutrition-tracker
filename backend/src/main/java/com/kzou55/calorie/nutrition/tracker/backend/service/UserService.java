@@ -30,6 +30,7 @@ public class UserService {
         // Save user
         User savedUser = userRepository.save(user);
 
+        /*
         // Create default meals
         LocalDate today = LocalDate.now();
         List<Meal> defaultMeals = List.of(
@@ -39,7 +40,7 @@ public class UserService {
         );
         mealRepository.saveAll(defaultMeals);
         savedUser.getMeals().addAll(defaultMeals);
-
+        */
         return savedUser;
     }
 
