@@ -5,11 +5,12 @@ import type { RootState } from "../../app/store";
 
 
 // 🔹 Async thunks
-export const fetchMeals = createAsyncThunk<Meal[], void, { state: RootState }>("meals/fetchMeals", async (_, thunkAPI) => {
+export const fetchMeals = createAsyncThunk<Meal[], string, { state: RootState }>("meals/fetchMeals", async (date, thunkAPI) => {
     const token = thunkAPI.getState().auth.token;
     if (!token) throw new Error("No auth token");
-    return await mealService.getUserMeals(token);
-});
+    return await mealService.getUserMeals(date, token); // pass date to backend
+}
+);
 
 export const addFoodToMeal = createAsyncThunk<Meal, { mealId?: number; entry: NewMealFoodEntry; mealType: string; date: string }, { state: RootState }>(
     "meals/addFood",

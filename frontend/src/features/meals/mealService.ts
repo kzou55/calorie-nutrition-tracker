@@ -3,12 +3,16 @@ import type { Meal, MealFoodEntry, NewMealFoodEntry } from "../../types/index.ts
 
 const API_URL = "http://localhost:8080/api/meals";
 
-const getUserMeals = async (token: string) => {
+const getUserMeals = async (date: string, token: string) => {
+    console.log(date)
     const response = await axios.get<Meal[]>(
-        API_URL,
-        { headers: { Authorization: `Bearer ${token}` } });
+        `${API_URL}/date/${date}`,
+        {
+            headers: { Authorization: `Bearer ${token}` },
+        }
+    );
     return response.data;
-}
+};
 
 
 const createMeal = async (meal: { type: string; date: string }, token: string) => {
