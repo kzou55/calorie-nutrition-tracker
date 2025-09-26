@@ -1,42 +1,26 @@
-import axios from "axios";
 import type { Meal, MealFoodEntry, NewMealFoodEntry } from "../../types/index.ts"
+import api from "../../utils/api";
 
-const API_URL = "http://localhost:8080/api/meals";
-
-const getUserMeals = async (date: string, token: string) => {
-    console.log(date)
-    const response = await axios.get<Meal[]>(
-        `${API_URL}/date/${date}`,
-        {
-            headers: { Authorization: `Bearer ${token}` },
-        }
-    );
+const getUserMeals = async (date: string) => {
+    console.log(localStorage.getItem("token"));
+    const response = await api.get<Meal[]>(`meals/date/${date}`);
     return response.data;
 };
 
 
-const createMeal = async (meal: { type: string; date: string }, token: string) => {
-    const response = await axios.post(API_URL, meal, {
-        headers: { Authorization: `Bearer ${token}` },
-    });
+const createMeal = async (meal: { type: string; date: string }) => {
+    const response = await api.post("meals", meal);
     return response.data as Meal;
 };
 
-const addMealFoodEntry = async (mealId: number, entry: MealFoodEntry | NewMealFoodEntry, token: string) => {
-    const response = await axios.post(`${API_URL}/${mealId}/entries`, entry, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-        },
-    });
+const addMealFoodEntry = async (mealId: number, entry: MealFoodEntry | NewMealFoodEntry) => {
+    const response = await api.post(`meals/${mealId}/entries`, entry);
     return response.data as Meal;
 };
 
-export const removeMealFoodEntry = async (mealId: number, entryId: number, token: string) => {
-    const res = await axios.delete(`${API_URL}/${mealId}/entries/${entryId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-    });
-    return res.data as Meal;
+export const removeMealFoodEntry = async (mealId: number, entryId: number) => {
+    const response = await api.delete(`meals/${mealId}/entries/${entryId}`);
+    return response.data as Meal;
 };
 
 const MealService = { getUserMeals, createMeal, addMealFoodEntry, removeMealFoodEntry }

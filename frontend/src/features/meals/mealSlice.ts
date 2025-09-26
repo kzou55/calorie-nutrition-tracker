@@ -1,14 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import type { Meal, MealFoodEntry, NewMealFoodEntry } from "../../types/index";
+import type { Meal, NewMealFoodEntry } from "../../types/index";
 import mealService from "./mealService";
 import type { RootState } from "../../app/store";
 
 
 // 🔹 Async thunks
-export const fetchMeals = createAsyncThunk<Meal[], string, { state: RootState }>("meals/fetchMeals", async (date, thunkAPI) => {
-    const token = thunkAPI.getState().auth.token;
-    if (!token) throw new Error("No auth token");
-    return await mealService.getUserMeals(date, token); // pass date to backend
+export const fetchMeals = createAsyncThunk<Meal[], string, { state: RootState }>("meals/fetchMeals", async (date) => {
+    return await mealService.getUserMeals(date);
 }
 );
 
@@ -24,12 +22,12 @@ export const addFoodToMeal = createAsyncThunk<Meal, { mealId?: number; entry: Ne
 
             // If mealId not provided, create the meal first
             if (!mealId) {
-                const meal = await mealService.createMeal({ type: mealType, date }, token);
+                const meal = await mealService.createMeal({ type: mealType, date });
                 id = meal.id;
             }
 
             // Add the food entry to the meal
-            return await mealService.addMealFoodEntry(id!, entry, token);
+            return await mealService.addMealFoodEntry(id!, entry);
         } catch (err: any) {
             return thunkAPI.rejectWithValue(err.message || "Failed to add food entry");
         }
@@ -37,11 +35,8 @@ export const addFoodToMeal = createAsyncThunk<Meal, { mealId?: number; entry: Ne
 );
 
 export const removeFoodEntryFromMeal = createAsyncThunk<Meal, { mealId: number; entryId: number }, { state: RootState }>(
-    "meals/removeFoodEntryFromMeal", async ({ mealId, entryId }, thunkAPI) => {
-
-        const token = thunkAPI.getState().auth.token;
-        if (!token) throw new Error("No auth token");
-        return await mealService.removeMealFoodEntry(mealId, entryId, token);
+    "meals/removeFoodEntryFromMeal", async ({ mealId, entryId }) => {
+        return await mealService.removeMealFoodEntry(mealId, entryId);
     });
 
 

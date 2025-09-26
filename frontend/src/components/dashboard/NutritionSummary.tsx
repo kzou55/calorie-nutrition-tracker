@@ -6,7 +6,8 @@ type NutritionSummaryProps = {
 };
 
 const NutritionSummary = ({ meals }: NutritionSummaryProps): JSX.Element => {
-  const totalCalories = meals.reduce((sum, meal) => sum + 1, 0);
+  const totalCalories = 0
+  meals.reduce((sum) => sum + 1, 0);
 
   return (
     <section className="">

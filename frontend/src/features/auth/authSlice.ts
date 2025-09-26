@@ -26,7 +26,9 @@ export const login = createAsyncThunk(
   "auth/login",
   async (credentials: { username: string; password: string }, thunkAPI) => {
     try {
-      return await authService.login(credentials);
+      const userData = await authService.login(credentials);
+      localStorage.setItem("token", userData.token);
+      return userData;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response?.data || "Login failed");
     }
@@ -85,7 +87,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-      .addCase(register.fulfilled, (state, action) => {
+      .addCase(register.fulfilled, (state) => {
         state.error = null;
       })
       .addCase(fetchCurrentUser.fulfilled, (state, action) => {
