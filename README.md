@@ -1,42 +1,59 @@
 # 🥗 Calorie & Nutrition Tracker
 
-A full-stack application that allows users to track their daily food intake, calories, and key nutritional values.
+A full-stack web application to help users track daily food intake, calories, and key nutritional values.
 
 ---
 
 ## 🚀 Features
-
-- Track individual **food items** with nutrition data
-- Log **meals** containing multiple food items
-- (Planned) User accounts for personalized tracking
-- RESTful API (Spring Boot)
-- Frontend in React + TypeScript (WIP)
+- Track individual food items with nutrition data  
+- Log meals containing multiple food items  
+- User authentication: login/register implemented  
+- RESTful API powered by Spring Boot  
+- Frontend in React + TypeScript (feature-based architecture, Vite-powered)  
 
 ---
 
 ## 🛠 Tech Stack
 
-### Backend
-- Java 21
-- Spring Boot
-- Spring Data JPA
-- H2 (in-memory dev database)
-- Maven
+**Backend:**  
+- Java 21  
+- Spring Boot  
+- Spring Data JPA  
+- PostgreSQL (deployed)  
+- Maven  
 
-### Frontend (Planned)
-- React + TypeScript
+**Frontend:**  
+- React  
+- TypeScript  
+- Vite (dev server & build tool)  
+- Yarn (package manager)  
 
 ---
 
 ## 📂 Project Structure
 
-    calorie-nutrition-tracker/
-    ├── backend/
-    │   ├── src/main/java/com/yourname/calorie/
-    │   │   ├── model/          # JPA Entities (FoodItem, Meal, User)
-    │   │   ├── repository/     # Spring Data JPA Repositories
-    │   │   ├── controller/     # REST Controllers
-    │   │   └── ...             # Other config / service
-    │   └── ...
-    ├── frontend/               # (To be added)
-    └── README.md
+**Backend**
+~~~~
+backend/
+├── config/       # Spring Boot configuration files
+├── controller/   # REST Controllers
+├── model/        # JPA Entities (FoodItem, Meal, User)
+├── repository/   # Spring Data JPA Repositories
+├── security/     # Security configuration (JWT, authentication)
+└── service/      # Business logic
+~~~~
+
+**Frontend**
+~~~~
+frontend/
+├── app/          # Main app initialization, routing
+├── assets/       # Images, icons, fonts
+├── constants/    # Static constants used across the app
+├── features/     # Feature-specific code (auth, meals, etc.)
+├── styles/       # Global CSS / SCSS styles
+├── types/        # TypeScript type definitions
+└── utils/        # Utility functions/helpers
+~~~~
+
+
+
