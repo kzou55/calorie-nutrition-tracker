@@ -1,5 +1,8 @@
 package com.kzou55.calorie.nutrition.tracker.backend.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kzou55.calorie.nutrition.tracker.backend.model.FoodItem;
 import com.kzou55.calorie.nutrition.tracker.backend.model.FoodSource;
 import lombok.RequiredArgsConstructor;
@@ -33,15 +36,28 @@ public class NutritionService {
     }
 
     private FoodItem parseNutritionJson(String json) {
-        // TODO: Parse JSON using Jackson/Gson and create a FoodItem
-        // For example purposes:
-        FoodItem item = new FoodItem();
-        item.setName("Example"); // replace with parsed name
-        item.setCalories(100);
-        item.setProtein(5);
-        item.setCarbs(20);
-        item.setFat(2);
-        item.setSource(FoodSource.NUTRITIONIX);
-        return item;
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            JsonNode root = mapper.readTree(json);
+            JsonNode foodsArray = root.path("foods");
+
+            if (foodsArray.isArray() && !foodsArray.isEmpty()) {
+                JsonNode foodNode = foodsArray.get(0);
+                FoodItem item = new FoodItem();
+                item.setName(foodNode.path("food_name").asText());
+                item.setCalories(foodNode.path("nf_calories").asDouble());
+                item.setProtein(foodNode.path("nf_protein").asDouble());
+                item.setCarbs(foodNode.path("nf_total_carbohydrate").asDouble());
+                item.setFat(foodNode.path("food_name").asDouble());
+                item.setSource(FoodSource.NUTRITIONIX);
+
+                return item;
+            }
+        }
+        catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to parse Nutritionx JSON");
+        }
     }
 }

@@ -1,9 +1,6 @@
 package com.kzou55.calorie.nutrition.tracker.backend.service;
 
-import com.kzou55.calorie.nutrition.tracker.backend.model.Meal;
-import com.kzou55.calorie.nutrition.tracker.backend.model.FoodItem;
-import com.kzou55.calorie.nutrition.tracker.backend.model.MealFoodEntry;
-import com.kzou55.calorie.nutrition.tracker.backend.model.User;
+import com.kzou55.calorie.nutrition.tracker.backend.model.*;
 import com.kzou55.calorie.nutrition.tracker.backend.repository.MealRepository;
 import com.kzou55.calorie.nutrition.tracker.backend.repository.FoodItemRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,6 +18,7 @@ public class MealService {
 
     private final MealRepository mealRepository;
     private final FoodItemRepository foodItemRepository;
+    private final NutritionService nutritionService;
 
     // Generic repo methods
     public List<Meal> getMeals() {
@@ -51,7 +49,7 @@ public class MealService {
 
     // Adding food entry to a meal
     @Transactional
-    public Meal addFoodToMeal(Long userId, Long mealId, MealFoodEntry entry) {
+    public Meal addFoodToMeal(Long userId, Long mealId, MealFoodEntry entry, boolean isUserAdded) {
 
         Meal meal = mealRepository.findById(mealId)
                 .orElseThrow(() -> new EntityNotFoundException("Meal not found with id: " + mealId));
@@ -62,14 +60,26 @@ public class MealService {
 
         FoodItem foodItem = entry.getFoodItem();
 
+        // If food already exists, fetch it
         if (foodItem.getId() != null) {
-            // If food already exists, fetch it
             FoodItem existingFood = foodItemRepository.findById(foodItem.getId())
                     .orElseThrow(() -> new EntityNotFoundException("Food item not found with id: " + foodItem.getId()));
             entry.setFoodItem(existingFood);
-        } else {
-            // Otherwise, create new food item
+        }
+        // Otherwise, create new food item
+        else if (isUserAdded){
+            foodItem.setSource(FoodSource.User);
             FoodItem savedFood = foodItemRepository.save(foodItem);
+            entry.setFoodItem(savedFood);
+        }
+        else {
+            // Nutritionix lookup
+            FoodItem apiFood = nutritionService.fetchNutrition(foodItem.getName());
+
+            // Checking DB to avoid duplicates
+            FoodItem savedFood = foodItemRepository
+                    .findByNameAndSource(apiFood.getName(), FoodSource.NUTRITIONIX)
+                    .orElseGet(() -> foodItemRepository.save(apiFood));
             entry.setFoodItem(savedFood);
         }
 
