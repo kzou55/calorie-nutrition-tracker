@@ -20,8 +20,13 @@ public class FoodItem {
     private Long id;
 
     private String name;
-    private int calories;
+    private double calories;
     private double protein;
+    private double carbs;
+    private double fat;
+
+    @Enumerated(EnumType.STRING)
+    private FoodSource source; // Tracking whether food is API or user-added
 
 
 }

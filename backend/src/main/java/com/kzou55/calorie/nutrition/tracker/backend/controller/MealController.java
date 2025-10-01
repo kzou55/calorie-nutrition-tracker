@@ -44,6 +44,8 @@ public class MealController {
     }
 
 
+
+
     // Creating a meal for a user on the given date
     // /api/meal
     @PostMapping
@@ -55,15 +57,15 @@ public class MealController {
         return ResponseEntity.ok(createdMeal);
     }
 
-    // Adding a food entry to a meal
-    // /api/meal/{mid}/entries
     @PostMapping("/{mealId}/entries")
-    public ResponseEntity<Meal> addFoodToMeal(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                              @PathVariable Long mealId,
-                                              @RequestBody MealFoodEntry entry) {
+    public ResponseEntity<Meal> addFoodToMeal(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long mealId,
+            @RequestBody MealFoodEntry entry,
+            @RequestParam(required = false, defaultValue = "false") boolean isUserAdded) {
 
         Long userId = userDetails.getUser().getId();
-        Meal updatedMeal = mealService.addFoodToMeal(userId, mealId, entry);
+        Meal updatedMeal = mealService.addFoodToMeal(userId, mealId, entry, isUserAdded);
         return ResponseEntity.ok(updatedMeal);
     }
 
