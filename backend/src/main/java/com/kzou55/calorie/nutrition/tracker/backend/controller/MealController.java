@@ -1,5 +1,6 @@
 package com.kzou55.calorie.nutrition.tracker.backend.controller;
 
+import com.kzou55.calorie.nutrition.tracker.backend.model.FoodItem;
 import com.kzou55.calorie.nutrition.tracker.backend.model.Meal;
 import com.kzou55.calorie.nutrition.tracker.backend.model.MealFoodEntry;
 import com.kzou55.calorie.nutrition.tracker.backend.model.User;
@@ -107,5 +108,4 @@ public class MealController {
 
         }
     }
-
 }
