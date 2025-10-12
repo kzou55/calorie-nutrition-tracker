@@ -60,26 +60,25 @@ public class MealService {
 
         FoodItem foodItem = entry.getFoodItem();
 
-        // If food already exists, fetch it
-        if (foodItem.getId() != null) {
+        if (foodItem.getId() != null) {// Food already exists in DB
             FoodItem existingFood = foodItemRepository.findById(foodItem.getId())
                     .orElseThrow(() -> new EntityNotFoundException("Food item not found with id: " + foodItem.getId()));
             entry.setFoodItem(existingFood);
         }
-        // Otherwise, create new food item
-        else if (isUserAdded){
+        else if (isUserAdded) {// User manually added new food
             foodItem.setSource(FoodSource.User);
             FoodItem savedFood = foodItemRepository.save(foodItem);
             entry.setFoodItem(savedFood);
         }
         else {
-            // Nutritionix lookup
-            FoodItem apiFood = nutritionService.fetchNutrition(foodItem.getName());
-
-            // Checking DB to avoid duplicates
+            // Food came from frontend search
+            // Check DB to avoid duplicates
             FoodItem savedFood = foodItemRepository
-                    .findByNameAndSource(apiFood.getName(), FoodSource.NUTRITIONIX)
-                    .orElseGet(() -> foodItemRepository.save(apiFood));
+                    .findByNameAndSource(foodItem.getName(), FoodSource.NUTRITIONIX)
+                    .orElseGet(() -> {
+                        foodItem.setSource(FoodSource.NUTRITIONIX);
+                        return foodItemRepository.save(foodItem);
+                    });
             entry.setFoodItem(savedFood);
         }
 
@@ -87,7 +86,7 @@ public class MealService {
         entry.setMeal(meal);
         meal.getMealFoodEntries().add(entry);
 
-        return mealRepository.save(meal); //
+        return mealRepository.save(meal);
     }
 
     // Deleting food from a meal

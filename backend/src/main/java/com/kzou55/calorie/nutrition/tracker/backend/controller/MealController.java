@@ -53,11 +53,26 @@ public class MealController {
     public ResponseEntity<Meal> createMeal(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody Meal meal) {
-
         Meal createdMeal = mealService.createMeal(userDetails.getUser(), meal);
         return ResponseEntity.ok(createdMeal);
     }
 
+    /**
+     * Adds a food entry to a meal.
+     *
+     * Frontend should send a MealFoodEntry in the request body.
+     *
+     * - If the food was searched from Nutritionix:
+     *      - Send the food's name, calories, protein, carbs, fat, and set id=null
+     *      - isUserAdded=false
+     *
+     * - If the food was manually added by the user:
+     *      - Send the food details with isUserAdded=true
+     *
+     * The backend will:
+     * - Check if the food already exists in the DB
+     * - Save user-added foods or new Nutritionix foods
+     */
     @PostMapping("/{mealId}/entries")
     public ResponseEntity<Meal> addFoodToMeal(
             @AuthenticationPrincipal CustomUserDetails userDetails,
