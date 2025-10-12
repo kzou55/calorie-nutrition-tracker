@@ -38,6 +38,5 @@ public class Meal {
 
     @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY) // <-- THIS
     private List<MealFoodEntry> mealFoodEntries = new ArrayList<>();
 }

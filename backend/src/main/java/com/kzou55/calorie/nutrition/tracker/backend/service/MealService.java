@@ -107,24 +107,6 @@ public class MealService {
 
         return mealRepository.save(meal);
     }
-/*
-    // Optional: create meals if none exist for today
-    public List<Meal> getOrInitializeMealsForToday(Long userId) {
-        LocalDate today = LocalDate.now();
-        List<Meal> meals = mealRepository.findByUserIdAndDate(userId, today);
-        if (meals.isEmpty()) {
-            for (String type : List.of("Breakfast", "Lunch", "Dinner")) {
-                Meal newMeal = new Meal();
-                newMeal.setUserId(userId);
-                newMeal.setType(type);
-                newMeal.setDate(today);
-                mealRepository.save(newMeal);
-            }
-            meals = mealRepository.findByUserIdAndDate(userId, today);
-        }
-        return meals;
-    }
-*/
 
     @Transactional
     public Meal createMeal(User user, Meal meal) {

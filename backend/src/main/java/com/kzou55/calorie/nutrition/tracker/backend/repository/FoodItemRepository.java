@@ -8,7 +8,7 @@ import java.util.Optional;
 
 
 public interface FoodItemRepository extends JpaRepository<FoodItem, Long> {
-    Optional<FoodItem> findByNameAndSource(String nanme, FoodSource foodSource);
+    Optional<FoodItem> findByNameAndSource(String name, FoodSource foodSource);
 
 }
 
