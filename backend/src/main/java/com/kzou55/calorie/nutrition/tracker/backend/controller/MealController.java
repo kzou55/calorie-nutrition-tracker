@@ -77,20 +77,20 @@ public class MealController {
     public ResponseEntity<Meal> addFoodToMeal(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long mealId,
-            @RequestBody MealFoodEntry entry,
-            @RequestParam(required = false, defaultValue = "false") boolean isUserAdded) {
+            @RequestBody MealFoodEntry entry) {
 
         Long userId = userDetails.getUser().getId();
-        Meal updatedMeal = mealService.addFoodToMeal(userId, mealId, entry, isUserAdded);
+        Meal updatedMeal = mealService.addFoodToMeal(userId, mealId, entry);
         return ResponseEntity.ok(updatedMeal);
     }
 
     // Deleting a food entry from a meal
     // /api/meals/{mid}/entries/{eid}
     @DeleteMapping("/{mealId}/entries/{entryId}")
-    public ResponseEntity<Meal> removeFoodFromMeal(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                   @PathVariable Long mealId,
-                                                   @PathVariable Long entryId) {
+    public ResponseEntity<Meal> removeFoodFromMeal(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long mealId,
+            @PathVariable Long entryId) {
 
         Long userId = userDetails.getUser().getId();
         Meal updatedMeal = mealService.removeFoodFromMeal(userId, mealId, entryId);
