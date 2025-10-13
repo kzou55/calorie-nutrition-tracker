@@ -65,12 +65,12 @@ frontend/
 
 ### Currently Working On
 - Nutritionix API integration (fetching nutrition info for foods)
-    - Work on handling deletion of meal entries and deleting custom fooditems from database if its the last one
+    - Refactor frontend to work with the adjusted backend
+    - Frontend needs to distinguish between adding a custom food and searched food 
   
 
 ### Frontend To-Do
 - Dynamically calculate and display total calories, protein, carbs, and fat for meals (currently done in frontend)
-- Optional: refactor frontend to use centralized Redux state for totals
 
 ### Backend To-Do / Refactor
 - Calculate meal total nutrition in backend
