@@ -4,15 +4,14 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL
 });
 
-// Attach token automatically
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
 
-  // Ensure headers exists as a plain object
+  // Ensure headers exists
   config.headers = config.headers ?? {};
 
-  // Add Authorization header
-  if (token) {
+  // Only add Authorization if not an auth endpoint
+  if (token && !config.url?.includes("/auth/")) {
     config.headers["Authorization"] = `Bearer ${token}`;
   }
 
