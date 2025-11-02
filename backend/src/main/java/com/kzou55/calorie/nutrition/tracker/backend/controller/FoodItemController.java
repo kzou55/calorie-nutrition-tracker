@@ -11,6 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,10 +83,11 @@ public class FoodItemController {
 
     // Test endpoint for a single food
     @GetMapping("/test-search")
-    public ResponseEntity<FoodItem> testSearch(@RequestParam String query) {
+    public ResponseEntity<List<FoodItem>> testSearch(@RequestParam String query) {
         try {
             FoodItem foodItem = nutritionService.fetchNutrition(query);
-            return ResponseEntity.ok(foodItem);
+            List<FoodItem> results = Collections.singletonList(foodItem);
+            return ResponseEntity.ok(results);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(null); // or return e.getMessage() for debugging
