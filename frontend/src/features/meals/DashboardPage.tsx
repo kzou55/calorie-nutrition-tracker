@@ -7,8 +7,8 @@ const DashboardPage = (): JSX.Element => {
   const totals = meals.reduce(
     (acc, meal) => {
       meal.mealFoodEntries.forEach((entry) => {
-        acc.calories += entry.foodItem.calories;
-        acc.protein += entry.foodItem.protein;
+        acc.calories += entry.foodItem.calories * entry.quantity; 
+        acc.protein += entry.foodItem.protein * entry.quantity;
       });
       return acc;
     },
