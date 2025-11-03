@@ -3,15 +3,12 @@ package com.kzou55.calorie.nutrition.tracker.backend.controller;
 
 import com.kzou55.calorie.nutrition.tracker.backend.model.FoodItem;
 import com.kzou55.calorie.nutrition.tracker.backend.repository.FoodItemRepository;
-import com.kzou55.calorie.nutrition.tracker.backend.service.NutritionService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,12 +17,9 @@ import java.util.Optional;
 public class FoodItemController {
 
     private final FoodItemRepository foodItemRepository;
-    private final NutritionService nutritionService;
-    // private final FoodItemService foodItemService;
 
-    public FoodItemController(FoodItemRepository foodItemRepository, NutritionService nutritionService) {
+    public FoodItemController(FoodItemRepository foodItemRepository) {
         this.foodItemRepository = foodItemRepository;
-        this.nutritionService = nutritionService;
     }
 
     @GetMapping
@@ -54,7 +48,7 @@ public class FoodItemController {
                 .toUri();
         return ResponseEntity.created(locationOfNewFoodItem).build();
     }
-    /**
+
     // PUT /api/fooditems/{id}
     @PutMapping("/{id}")
     public ResponseEntity<FoodItem> updateFoodItem(@PathVariable Long id, @RequestBody FoodItem foodItemUpdate) {
@@ -69,7 +63,6 @@ public class FoodItemController {
             return ResponseEntity.noContent().build();
         }
     }
-     **/
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFoodItem(@PathVariable Long id) {
@@ -80,25 +73,4 @@ public class FoodItemController {
             return ResponseEntity.notFound().build();
         }
     }
-
-    // Test endpoint for a single food
-    @GetMapping("/test-search")
-    public ResponseEntity<List<FoodItem>> testSearch(@RequestParam String query) {
-        try {
-            FoodItem foodItem = nutritionService.fetchNutrition(query);
-            List<FoodItem> results = Collections.singletonList(foodItem);
-            return ResponseEntity.ok(results);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null); // or return e.getMessage() for debugging
-        }
-    }
-/**
-    @GetMapping("/search")
-    public ResponseEntity<FoodItem> searchFood(@RequestParam String query) {
-        // FoodItem foodItem = foodItemService.searchOrFetchFood(query);
-        return ResponseEntity.ok(fo);
-    }
-    **/
-
 }

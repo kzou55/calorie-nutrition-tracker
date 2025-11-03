@@ -63,7 +63,6 @@ const AddMealPage = () => {
             <th className="border border-gray-300 px-4 py-2">Food</th>
             <th className="border border-gray-300 px-4 py-2">Calories (kcal)</th>
             <th className="border border-gray-300 px-4 py-2">Protein (g)</th>
-            <th className="border border-gray-300 px-4 py-2">Quantity</th>
             <th className="border border-gray-300 px-4 py-2"></th>
           </tr>
         </thead>
@@ -90,9 +89,6 @@ const AddMealPage = () => {
                       </td>
                       <td className="border border-gray-300 px-4 py-2">
                         {entry.foodItem.protein}
-                      </td>
-                      <td className="border border-gray-300 px-4 py-2">
-                        {entry.quantity}
                       </td>
                       <td className="border border-gray-300 px-4 py-2 text-center">
                         <button
