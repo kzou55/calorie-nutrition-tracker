@@ -62,11 +62,10 @@ frontend/
 - Meal creation and management
 - Adding/removing food entries to meals
 - PostgreSQL database for production
+- Nutritionx API integration
+- Allows custom or NutritionX searched foods as food entry
 
 ### Currently Working On
-- Nutritionix API integration (fetching nutrition info for foods)
-    - Refactor frontend to work with the adjusted backend
-    - Frontend needs to distinguish between adding a custom food and searched food 
   
 
 ### Frontend To-Do
