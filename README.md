@@ -79,3 +79,7 @@ frontend/
 
 
 
+### To run
+- Do "npm run dev" for the frontend
+- Do  
+- Backend is deployed on render which takes a while to start as it's on the free tier. 
